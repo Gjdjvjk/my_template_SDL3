@@ -21,10 +21,10 @@ FetchContent_Declare(SDL3_ttf
     GIT_TAG release-3.2.0
 )
 
-FetchContent_Declare(SDL3_mixer
-    GIT_REPOSITORY  https://github.com/libsdl-org/SDL_mixer.git
-    GIT_TAG main
-)
+# FetchContent_Declare(SDL3_mixer
+#     GIT_REPOSITORY  https://github.com/libsdl-org/SDL_mixer.git
+#     GIT_TAG main
+# )
 
 set(SDL_PIPEWIRE OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(SDL3)
@@ -35,7 +35,7 @@ list(APPEND CMAKE_PREFIX_PATH "${sdl3_BINARY_DIR}")
 FetchContent_MakeAvailable(
     SDL3_image
     SDL3_ttf
-    SDL3_mixer
+    # SDL3_mixer
     )
 
 add_subdirectory(lib)

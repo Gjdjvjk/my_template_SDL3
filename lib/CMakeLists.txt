@@ -3,6 +3,7 @@ add_library(game_lib STATIC)
 target_sources(game_lib PRIVATE
     src/Paths.cpp
     src/Game.cpp
+    src/Cube.cpp
 )
 
 target_include_directories(game_lib PUBLIC include)

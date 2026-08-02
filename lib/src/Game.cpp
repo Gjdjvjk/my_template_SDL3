@@ -1,3 +1,6 @@
+#include "SDL3/SDL_keycode.h"
+#include "SDL3/SDL_timer.h"
+#include "SDL3/SDL_video.h"
 #include <game/Game.h>
 #include <game/Paths.h>
 
@@ -5,12 +8,26 @@
 
 Game::Game() = default;
 
+Game::Game(const char *title, int xpos, int ypos, int width, int height, SDL_WindowFlags flags) {
+    if (!init( title, xpos, ypos, width, height, flags))
+    {
+        std::fprintf(stderr, "Failed to create: [Game] instance.\n");
+    }
+}
+
+Game::Game(const char *title, int width, int height) {
+    if (!init( title, 0, 0, width, height, 0))
+    {
+        std::fprintf(stderr, "Failed to create: [Game] instance.\n");
+    }
+}
+
 Game::~Game()
 {
     clean();
 }
 
-bool Game::init(const char* title, int xpos, int ypos, int width, int height, int flags)
+bool Game::init(const char* title, int xpos, int ypos, int width, int height, SDL_WindowFlags flags)
 {
     if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
     {
@@ -25,6 +42,8 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, in
         SDL_Quit();
         return false;
     }
+
+    SDL_SetWindowPosition(m_pWindow, xpos, ypos);
 
     m_pRenderer = SDL_CreateRenderer(m_pWindow, nullptr);
     if (!m_pRenderer)
@@ -58,9 +77,6 @@ void Game::shutdown()
 
 void Game::run()
 {
-    if (!m_bRunning)
-        return;
-
     Uint64 prevCounter = SDL_GetPerformanceCounter();
 
     while (m_bRunning)
@@ -73,27 +89,48 @@ void Game::run()
 
         SDL_Event event;
         while (SDL_PollEvent(&event))
+        {
             handleEvent(event);
+        }
 
         update(deltaTime);
+
         render();
     }
+
+    shutdown();
 }
 
 void Game::handleEvent(const SDL_Event& event)
 {
-    if (event.type == SDL_EVENT_QUIT)
+
+    if (event.type == SDL_EVENT_QUIT) {
         m_bRunning = false;
+    }
+
+    if (event.key.key == SDLK_ESCAPE) {
+        m_bRunning = false;
+    }
 }
 
-void Game::update(float /*deltaTime*/)
+void Game::update(float deltaTime)
 {
+    if (deltaTime < FRAME_TIME) {
+        SDL_Delay(FRAME_TIME - deltaTime);
+    }
+
+    m_cube.update(deltaTime);
 }
 
 void Game::render()
 {
-    SDL_SetRenderDrawColor(m_pRenderer, 0x1a, 0x1a, 0x2e, 0xff);
+    SDL_SetRenderDrawColor(m_pRenderer, 0xff, 0xff, 0xff, 0xff);
     SDL_RenderClear(m_pRenderer);
+
+    // draw things here
+
+    m_cube.render(m_pRenderer);
+
     SDL_RenderPresent(m_pRenderer);
 }
 
@@ -101,3 +138,5 @@ void Game::clean() { }
 
 SDL_Window* Game::window() const { return m_pWindow; }
 SDL_Renderer* Game::renderer() const { return m_pRenderer; }
+bool Game::is_running() const { return m_bRunning; }
+

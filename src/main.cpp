@@ -3,22 +3,15 @@
 
 #include <cstdio>
 
+Game* g_game = nullptr;
+
 int main(int argc, char* argv[])
 {
-    (void)argc;
-    (void)argv;
-
-    Game game;
-    if (!game.init("SDL3 Template", 1280, 720, 1280, 720, 0))
-    {
-        std::fprintf(stderr, "Failed to initialize game.\n");
-        return 1;
-    }
+    g_game = new Game("SDL3 Template", 25, 25, 1280, 720, 0);
 
     std::printf("Assets path: %s\n", GetAssetsPath().c_str());
 
-    game.run();
-    game.shutdown();
+    g_game->run();
 
     return 0;
 }
