@@ -124,7 +124,7 @@ void Game::update(float deltaTime)
 
 void Game::render()
 {
-    SDL_SetRenderDrawColor(m_pRenderer, 0xff, 0xff, 0xff, 0xff);
+    SDL_SetRenderDrawColor(m_pRenderer, 0x00, 0x00, 0x00, 0xff);
     SDL_RenderClear(m_pRenderer);
 
     // draw things here

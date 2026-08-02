@@ -17,18 +17,22 @@ public:
     Cube();
     ~Cube();
     void init();
+    void set_speed( float speed);
+    float get_speed() const;
     void render(SDL_Renderer* renderer);
     void update(float dt);
 
 private:
-    point3d rotate(point3d p, float ang);
+    point3d rotate(point3d p, point3d center, float ang);
     point2d translate(point2d p);
     point2d project(point3d p);
     void draw_point(point3d p, SDL_Renderer* renderer);
+    point3d centeroid() const;
     
 private:
     point3d m_model[8];
     float m_angle;
+    float m_speed;
 };
 
 #endif

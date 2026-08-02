@@ -8,7 +8,7 @@
 
 #include <game/Cube.h>
 
-#define FPS 60
+#define FPS 60.0f
 #define FRAME_TIME 1000/FPS
 
 class Game {
