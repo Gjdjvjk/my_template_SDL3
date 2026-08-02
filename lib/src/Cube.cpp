@@ -1,6 +1,7 @@
 #include "SDL3/SDL_rect.h"
 #include "SDL3/SDL_render.h"
 #include <cmath>
+#include <cstddef>
 #include <game/Cube.h>
 #include <numbers>
 
@@ -18,6 +19,11 @@ void Cube::init() {
   m_model[5] = point3d(0.5, -0.5, -0.5);
   m_model[6] = point3d(-0.5, -0.5, -0.5);
   m_model[7] = point3d(-0.5, 0.5, -0.5);
+
+  m_wir_frame = {
+      {0, 2,5, 0, 1, 2, 3, 0, 4, 5, 6, 7, 4, 1, 3, 6, 4, 3, 7, 2, 6},
+      {0, 7, 5, 1, 6}
+  };
 }
 
 void Cube::render(SDL_Renderer *renderer) {
@@ -25,15 +31,34 @@ void Cube::render(SDL_Renderer *renderer) {
   for (auto &p : m_model) {
     draw_point(p, renderer);
   }
+  for (const auto& a: m_wir_frame) {
+    for (size_t i{}; i < a.size() - 1 ; i++) {
+        const point3d p1 = m_model[a[i]];
+        const point3d p2 = m_model[a[i+1]];
+
+        draw_line(p1, p2, renderer);
+    }
+  }
 }
 
 void Cube::draw_point(point3d p, SDL_Renderer *renderer) {
-  float s = 8;
-  const point3d center = centeroid();
+    const float s {8.f};
+    const point3d center = centeroid();
+    
+    point2d pos = translate(project(rotate(p, center, m_angle)));
+    SDL_FRect rect{pos.x - s * 0.5f, pos.y - s * 0.5f, s, s};
+    SDL_RenderFillRect(renderer, &rect);
+}
 
-  point2d pos = translate(project(rotate(p, center, m_angle)));
-  SDL_FRect rect{pos.x - s * 0.5f, pos.y - s * 0.5f, s, s};
-  SDL_RenderFillRect(renderer, &rect);
+void Cube::draw_line(point3d p1, point3d p2, SDL_Renderer *renderer) {
+    const float width {5.0f};
+    const point3d center = centeroid();
+
+    point2d a, b;
+    a = translate(project(rotate(p1, center, m_angle)));
+    b = translate(project(rotate(p2, center, m_angle)));
+
+    SDL_RenderLine(renderer, a.x, a.y, b.x, b.y);
 }
 
 point2d Cube::translate(point2d p) {

@@ -108,8 +108,33 @@ void Game::handleEvent(const SDL_Event& event)
         m_bRunning = false;
     }
 
-    if (event.key.key == SDLK_ESCAPE) {
-        m_bRunning = false;
+    if (event.key.down) {
+        switch (event.key.key) {
+            case SDLK_ESCAPE:
+                m_bRunning = false;
+                break;
+
+            case SDLK_SPACE:
+                if(m_cube.get_speed() == 0.0f)
+                {
+                    m_cube.set_speed(0.2f);
+                }
+                else {
+                    m_cube.set_speed(0.0f);
+                }
+                break;
+
+            case SDLK_LEFT:
+                m_cube.set_speed(m_cube.get_speed() - 0.2f);
+                break;
+
+            case SDLK_RIGHT:
+                m_cube.set_speed(m_cube.get_speed() + 0.2f);
+                break;
+
+            default:
+                break;
+        }
     }
 }
 
